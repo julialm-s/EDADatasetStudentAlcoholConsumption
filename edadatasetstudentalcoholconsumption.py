@@ -105,9 +105,187 @@ d1 = d1.rename(columns={
     'G3': 'nota_final'
 })
 
+# adicionar coluna com a média das 3 notas de cada aluno
+d1["media_notas"] = d1[["nota_1p", "nota_2p", "nota_final"]].mean(axis=1)
+
+display(d1.head())
+
 print(d1.isnull().sum())
 # não tem nulos
 
 print("Duplicatas:", d1.duplicated().sum())
 # não tem duplicatas
 
+# verificar o tipo dos atributos
+d1[['tamanho_familia', 'nº_reprovacoes', 'acesso_internet_casa', 'frequencia_saida_com_amigos']].info()
+
+# quantidade, frequência, o que mais aparece, média, desvio padrão, min, max e quartis
+display(d1[['tamanho_familia', 'nº_reprovacoes', 'acesso_internet_casa', 'frequencia_saida_com_amigos']].describe(include='all').T)
+
+#Frequência dos resultad
+
+print(d1["tamanho_familia"].value_counts())
+print( d1["acesso_internet_casa"].value_counts())
+
+for column in ["nº_reprovacoes", "frequencia_saida_com_amigos", "consumo_alcool_semana", "consumo_alcool_fim_de_semana"]:
+    #print(f"\n{col}:")
+    print(d1[column].value_counts().sort_index())
+
+for column in ["nota_1p", "nota_2p", "nota_final"]:
+    print(f"\n{column}: mínimo={d1[column].min()}, máximo={d1[column].max()}")
+
+# Quantos estudantes têm pais que moram juntos ou separados? Quantos estudantes possuem acesso à internet? Os grupos possuem tamanhos muito diferentes?
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+
+sns.countplot(data=d1, x="tamanho_familia", ax=axes[0])
+axes[0].set_title("Tamanho da família")
+
+sns.countplot(data=d1, x="acesso_internet_casa", ax=axes[1])
+axes[1].set_title("Acesso à internet em casa")
+
+plt.tight_layout()
+plt.show()
+
+atributos = ["nº_reprovacoes", "frequencia_saida_com_amigos", "consumo_alcool_semana", "consumo_alcool_fim_de_semana"]
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+for col, ax in zip(atributos, axes.flatten()):
+    sns.countplot(data=d1, x=col, ax=ax)
+    ax.set_title(f"Distribuição de {col}")
+
+plt.tight_layout()
+plt.show()
+
+# agrupando as respostas de consumo na semana e no fim de semana
+
+d1.groupby(["consumo_alcool_semana","consumo_alcool_fim_de_semana"]).size()
+
+sns.histplot(data=d1, x="consumo_alcool_semana", y="consumo_alcool_fim_de_semana", discrete=(True, True))
+plt.title("Consumo de álcool: semana × fim de semana")
+plt.xlabel("Consumo durante a semana")
+plt.ylabel("Consumo nos fins de semana")
+plt.show()
+
+# distribuição das notas por período e da média
+
+fig, axes = plt.subplots(1, 4, figsize=(15, 4))
+
+for col, ax in zip(["nota_1p", "nota_2p", "nota_final", "media_notas"], axes): # achatar matriz
+    sns.histplot(data=d1, x=col, bins=20, ax=ax)
+    ax.set_title(f"Distribuição das notas: {col}")
+
+plt.tight_layout() # ajustar espaçamento
+plt.show()
+
+display(d1[["nota_1p", "nota_2p", "nota_final", "media_notas"]].describe().T) # a média é maior no nota_final
+
+# relação tamanho da família e média dos alunos
+
+media_notas = d1.groupby("tamanho_familia")["media_notas"].mean()
+
+media_notas.plot(kind="bar", figsize=(8, 5))
+
+plt.title("Média das notas em Português por tamanho da família")
+plt.xlabel("Tamanho da família")
+plt.ylabel("Média das notas")
+plt.xticks(rotation=0)
+plt.show()
+
+# relação quant. de reprovações e média dos alunos
+
+media_notas = d1.groupby("nº_reprovacoes")["media_notas"].mean()
+
+media_notas.plot(kind="bar", figsize=(8, 5))
+
+plt.title("Média das notas em Português por quantidade de reprovações")
+plt.xlabel("Quant. reprovações")
+plt.ylabel("Média das notas")
+plt.xticks(rotation=0)
+plt.show()
+
+# relação acesso à internet em casa e média dos alunos
+
+media_notas = d1.groupby("acesso_internet_casa")["media_notas"].mean()
+
+media_notas.plot(kind="bar", figsize=(8, 5))
+
+plt.title("Média das notas em Português por uso de internet")
+plt.xlabel("Acesso à internet: sim ou não")
+plt.ylabel("Média das notas")
+plt.xticks(rotation=0)
+plt.show()
+
+# relação consumo de álcool no fim de semana e média dos alunos
+
+media_notas = d1.groupby("consumo_alcool_fim_de_semana")["media_notas"].mean()
+
+media_notas.plot(kind="bar", figsize=(8, 5))
+
+plt.title("Nota média em Português por consumo de álcool no fim de semana")
+plt.xlabel("Consumo de álcool (1 = muito baixo, 5 = muito alto)")
+plt.ylabel("Média das notas")
+plt.xticks(rotation=0)
+plt.show()
+
+# relação consumo de álcool na semana e média dos alunos
+
+media_notas = d1.groupby("consumo_alcool_semana")["media_notas"].mean()
+
+media_notas.plot(kind="bar", figsize=(8, 5))
+
+plt.title("Nota média em Português por consumo de álcool na semana")
+plt.xlabel("Consumo de álcool (1 = muito baixo, 5 = muito alto)")
+plt.ylabel("Média das notas")
+plt.xticks(rotation=0)
+plt.show()
+
+# relação da frequência de saída com os amigos e a média das notas
+
+media_notas = d1.groupby("frequencia_saida_com_amigos")["media_notas"].mean()
+
+media_notas.plot(kind="bar", figsize=(8, 5))
+
+plt.title("Nota média em Português por frequência de saída com os amigos")
+plt.xlabel("1 = muito baixo, 5 = muito alto")
+plt.ylabel("Média das notas")
+plt.xticks(rotation=0)
+plt.show()
+
+# correlação entre os atributos
+
+display(
+    d1[["consumo_alcool_semana", "consumo_alcool_fim_de_semana", "frequencia_saida_com_amigos", "media_notas"]]
+      .corr(method="spearman")
+)
+
+"""- Álcool e Notas: Correlação negativa fraca (impacto leve nas médias).
+- Saídas e Notas: Relação insignificante com o desempenho acadêmico.
+- Quem bebe mais na semana, tende a beber mais no fim de semana.
+- Sair com amigos possui correlação positiva com o consumo de álcool (principalmente aos fins de semana).
+
+# Minha análise até aqui
+
+- **Como se distribuem os níveis de consumo de álcool durante a semana e nos fins de semana?**
+
+Durante a semana, o consumo de álcool é predominantemente baixo, com grande número no nível 1. Já nos fins de semana, existe uma mudança: a maioria dos estudantes possui um consumo moderado (níveis 2 a 4), juntamente com um aumento na proporção de consumo alto (nível 5)."
+
+- **Estudantes com maior consumo de álcool apresentam notas finais menores?**
+Sim, a média dos alunos com alto consumo de álcool nos fins de semana é um pouco menor.
+
+- **O consumo durante a semana está mais associado às notas do que o consumo nos fins de semana?**
+
+As proporções entre os grupos são bem parecidas. Beber durante a semana tende a afetar as notas um pouco mais, mas esse impacto é bem pequeno.
+
+- **Estudantes que consomem mais álcool nos fins de semana também saem mais com os amigos?**
+
+- **Como a média de G3 varia entre os diferentes níveis de frequência de saídas com amigos?**
+
+- **Estudantes com mais reprovações anteriores apresentam notas finais menores?**
+
+Sim, estudantes com 0 reprovações apresentam uma média maior.
+
+- **Estudantes de famílias maiores e menores apresentam diferenças no consumo ou nas notas?**
+
+- **O acesso à internet está associado a diferenças no desempenho acadêmico?**
+"""
