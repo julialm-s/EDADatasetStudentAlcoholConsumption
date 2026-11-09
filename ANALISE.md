@@ -31,3 +31,18 @@ Em matemática, na escola GP, os homens tiram notas maiores. Na escola MS, as mu
 Enquanto que em português, as mulheres tiram notas maiores em ambas as escolas.
 
 Na matéria de português, em ambas as escolas as mulheres são melhores que os homens. (cf. relacao_escola...)
+
+
+Algo que quero te dizer é que não vamos mais analisar o arquivo dos alunos de matemática, vamos apenas retirá-lo.
+Sobre como vamos definir o Q1 e Q4 dentro de cada escola.
+Inicialmente eu tinha pensado em algo que fosse como a opção A, que pega os valores gerais e plota um gráfico disso. Mas diante do que você falou, acho melhor fazer os cortes dentro da própria escola, apesar dos meus colegas de projeto terem feito de forma geral, porque eles nao consideraram a escola como uma coluna durante a análise deles. 
+Outra coisa que quero que tratemos é a seguinte: o meu desejo com isso é tirar dados mais conclusivos sobre os grupos e poder concluir que x grupo ocupa uma maior porcentagem no quarto quartil que em relação ao grupo y. Isso vai ser possível de identificar?
+Quero que o código seja semelhante ao do boxplot por lente, para que eu possa alterar as variáveis que estão sendo plotadas facilmente.
+Antes de implementar, apenas confira tudo antes. Informe sempre o tamanho do grupo, como no boxplot por lente e use media_notas.
+
+
+
+Não coloque taxa de 25%. Eu gostaria de fosse feito um gráfico de barra, com as porcentagens, assim como vc fez o outro.
+Eu pensei exclusivamente no gŕafico plotado mostrando a diferença, como é mostrado nesse, por exemplo:
+
+O que quero no gráfico é apenas as porcentagens em cima das barras para que assim eu possa colocá-los na apresentação e explicar mais facilmente.
